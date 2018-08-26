@@ -12,6 +12,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Player from './Player';
+import _ from 'lodash';
 
 const drawerWidth = 240;
 
@@ -92,6 +93,7 @@ const styles = theme => ({
 class Dashboard extends React.Component {
   state = {
     open: false,
+    playerList: [],
   };
 
   handleDrawerOpen = () => {
@@ -103,15 +105,27 @@ class Dashboard extends React.Component {
   };
 
   async componentDidMount() {
-    const response = await fetch(`http://localhost:8282`);
+    const draftRankings = await this.getServerData('draft-rankings', 'DraftRankings');
+    const depthCharts = await this.getServerData('depth-charts', 'DepthCharts');
+    const playerList = _.chain(draftRankings)
+      .map(p => ({
+        ...p,
+        ..._.find(depthCharts[p.team][p.position], { playerId: p.playerId })
+      }))
+      .value();
+    this.setState({...this.state, playerList });
+  }
+
+  async getServerData(url, selector, params) {
+    const response = await fetch(`http://localhost:8282/${url}`);
     const data = await response.json();
-    console.log('DATA', data);
-    this.setState({...this.state, draftResults: data.DraftRankings});
+    return data[selector];
   }
 
   render() {
     const { classes } = this.props;
-    const players = this.state.draftResults || [];
+    const players = this.state.playerList || [];
+    console.log('Listing players', players);
     return (
       <React.Fragment>
         <CssBaseline />
