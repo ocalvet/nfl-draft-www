@@ -1,4 +1,5 @@
 import React from 'react';
+import fetch from 'isomorphic-fetch';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
@@ -6,14 +7,11 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
+import Player from './Player';
 
 const drawerWidth = 240;
 
@@ -104,9 +102,16 @@ class Dashboard extends React.Component {
     this.setState({ open: false });
   };
 
+  async componentDidMount() {
+    const response = await fetch(`http://localhost:8282`);
+    const data = await response.json();
+    console.log('DATA', data);
+    this.setState({...this.state, draftResults: data.DraftRankings});
+  }
+
   render() {
     const { classes } = this.props;
-
+    const players = this.state.draftResults || [];
     return (
       <React.Fragment>
         <CssBaseline />
@@ -150,6 +155,7 @@ class Dashboard extends React.Component {
             <Typography variant="display1" gutterBottom>
               Players
             </Typography>
+            {players.map(p => <Player key={p.playerId} player={p} />)}
           </main>
         </div>
       </React.Fragment>
