@@ -9,6 +9,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import Checkbox from '@material-ui/core/Checkbox';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Player from './Player';
@@ -94,6 +95,8 @@ class Dashboard extends React.Component {
   state = {
     open: false,
     playerList: [],
+    draftedPlayers: [],
+    showDrafted: true,
   };
 
   handleDrawerOpen = () => {
@@ -107,24 +110,45 @@ class Dashboard extends React.Component {
   async componentDidMount() {
     const draftRankings = await this.getServerData('draft-rankings', 'DraftRankings');
     const depthCharts = await this.getServerData('depth-charts', 'DepthCharts');
+    const teams = await this.getServerData('nfl-teams', 'NFLTeams');
+    const tiers = await this.getServerData('tiers');
     const playerList = _.chain(draftRankings)
       .map(p => ({
         ...p,
-        ..._.find(depthCharts[p.team][p.position], { playerId: p.playerId })
+        ..._.find(depthCharts[p.team][p.position], { playerId: p.playerId }),
+        team: _.find(teams, { code: p.team }),
+        tier: _.find(tiers, { playerId: p.playerId }),
+        drafted: false,
       }))
       .value();
-    this.setState({...this.state, playerList });
+    this.setState({...this.state, playerList, tiers });
   }
 
   async getServerData(url, selector, params) {
     const response = await fetch(`http://localhost:8282/${url}`);
     const data = await response.json();
-    return data[selector];
+    return selector ? data[selector] : data;
+  }
+
+  onDraftPlayer = (player, draftedBy) => {
+    player.drafted = true;
+    player.draftedBy = draftedBy;
+    this.setState({...this.state });
+  }
+
+  onDisablePlayer = (player) => {
+    player.drafted = !player.drafted;
+    this.setState(this.state);
+  }
+
+  onFilteringDrafted = () => {
+    this.setState({...this.state, showDrafted: !this.state.showDrafted })
   }
 
   render() {
     const { classes } = this.props;
     const players = this.state.playerList || [];
+    const displayPlayers = this.state.showDrafted ? players : players.filter(p => !p.drafted);
     console.log('Listing players', players);
     return (
       <React.Fragment>
@@ -166,10 +190,25 @@ class Dashboard extends React.Component {
           </Drawer>
           <main className={classes.content}>
             <div className={classes.appBarSpacer} />
-            <Typography variant="display1" gutterBottom>
-              Players
-            </Typography>
-            {players.map(p => <Player key={p.playerId} player={p} />)}
+            <div style={{ paddingTop: 4, paddingBottom: 4, marginTop: 2, marginBottom: 2, fontWeight: 'bolder', fontVariant: 'small-caps', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+              <div style={{ flex: 1.5 }}>Player</div>
+              <div style={{ flex: 1 }}>Position</div>
+              <div style={{ flex: 1.5 }}>Team</div>
+              <div style={{ flex: 1 }}>Depth</div>
+              <div style={{ flex: 1 }}>Tier</div>
+              <div style={{ flex: 1 }}>Nerd Rank</div>
+              <div style={{ flex: 1 }}>Bye Week</div>
+              <div style={{ flex: 1.5 }}>
+                Show drafted 
+                <Checkbox
+                  checked={this.state.showDrafted}
+                  onChange={this.onFilteringDrafted}
+                  value="drafted"
+                />
+              </div>
+            </div>
+            <hr />
+            {displayPlayers.map(p => <Player key={p.playerId} player={p} onDraftPlayer={this.onDraftPlayer} onDisablePlayer={this.onDisablePlayer} />)}
           </main>
         </div>
       </React.Fragment>
