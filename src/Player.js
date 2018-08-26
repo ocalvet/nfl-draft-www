@@ -3,8 +3,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 
 
-export default ({ player, onDraftPlayer, onDisablePlayer }) => {
-  const color = player.drafted ? '#ddd' : 'black';
+export default ({ player, onDraftPlayer }) => {
+  const drafted = player.draftedBy && player.draftedBy.length > 0;
+  const color = drafted ? '#ddd' : 'black';
   return (
     <div style={{ paddingTop: 4, paddingBottom: 4, marginTop: 2, marginBottom: 2, color, display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
       <div style={{ flex: 1.5 }}>{player.displayName}</div>
@@ -14,9 +15,10 @@ export default ({ player, onDraftPlayer, onDisablePlayer }) => {
       <div style={{ flex: 1 }}>{player.tier ? player.tier.tier : ''}</div>
       <div style={{ flex: 1 }}>{player.nerdRank}</div>
       <div style={{ flex: 1 }}>{player.byeWeek}</div>
-      <div style={{ flex: 1.5, flexDirection: 'row', justifyContent: 'space-between' }}>
+      <div style={{ flex: 1.2, flexDirection: 'row', justifyContent: 'space-between' }}>
       <Select
             value={player.draftedBy || ''}
+            style={{ width: '100%' }}
             onChange={(event) => onDraftPlayer(player, event.target.value)}
             inputProps={{
               name: 'draftedBy',
@@ -37,7 +39,6 @@ export default ({ player, onDraftPlayer, onDisablePlayer }) => {
             <MenuItem value={'ma'}>Mark</MenuItem>
             <MenuItem value={'u'}>UNK</MenuItem>
           </Select>
-        <button onClick={() => onDisablePlayer(player)}>{player.drafted ? 'Enable' : 'Disable'}</button>
       </div>
     </div>
   );

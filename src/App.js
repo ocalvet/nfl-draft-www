@@ -14,9 +14,10 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Player from './Player';
 import _ from 'lodash';
+import { Button } from '@material-ui/core';
 
 const drawerWidth = 240;
-
+const STORAGE_KEY = 'dn@playerList';
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -108,20 +109,27 @@ class Dashboard extends React.Component {
   };
 
   async componentDidMount() {
-    const draftRankings = await this.getServerData('draft-rankings', 'DraftRankings');
-    const depthCharts = await this.getServerData('depth-charts', 'DepthCharts');
-    const teams = await this.getServerData('nfl-teams', 'NFLTeams');
-    const tiers = await this.getServerData('tiers');
-    const playerList = _.chain(draftRankings)
-      .map(p => ({
-        ...p,
-        ..._.find(depthCharts[p.team][p.position], { playerId: p.playerId }),
-        team: _.find(teams, { code: p.team }),
-        tier: _.find(tiers, { playerId: p.playerId }),
-        drafted: false,
-      }))
-      .value();
-    this.setState({...this.state, playerList, tiers });
+    const savedState = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (savedState) {
+      this.setState(savedState);
+    } else {
+      const draftRankings = await this.getServerData('draft-rankings', 'DraftRankings');
+      const depthCharts = await this.getServerData('depth-charts', 'DepthCharts');
+      const teams = await this.getServerData('nfl-teams', 'NFLTeams');
+      const tiers = await this.getServerData('tiers');
+      const playerList = _.chain(draftRankings)
+        .take(300)
+        .map(p => ({
+          ...p,
+          ..._.find(depthCharts[p.team][p.position], { playerId: p.playerId }),
+          team: _.find(teams, { code: p.team }),
+          tier: _.find(tiers, { playerId: p.playerId }),
+          drafted: false,
+        }))
+        .value();
+      this.setState({ ...this.state, playerList });
+    }
+
   }
 
   async getServerData(url, selector, params) {
@@ -131,18 +139,17 @@ class Dashboard extends React.Component {
   }
 
   onDraftPlayer = (player, draftedBy) => {
-    player.drafted = true;
     player.draftedBy = draftedBy;
-    this.setState({...this.state });
-  }
-
-  onDisablePlayer = (player) => {
-    player.drafted = !player.drafted;
-    this.setState(this.state);
+    this.setState({ ...this.state });
   }
 
   onFilteringDrafted = () => {
-    this.setState({...this.state, showDrafted: !this.state.showDrafted })
+    this.setState({ ...this.state, showDrafted: !this.state.showDrafted })
+  }
+
+  saveStateData = () => {
+    const data = JSON.stringify(this.state);
+    localStorage.setItem(STORAGE_KEY, data);
   }
 
   render() {
@@ -173,6 +180,7 @@ class Dashboard extends React.Component {
               <Typography variant="title" color="inherit" noWrap className={classes.title}>
                 Draft Notes
               </Typography>
+              <Button color="inherit" onClick={this.saveStateData}>Save</Button>
             </Toolbar>
           </AppBar>
           <Drawer
@@ -190,7 +198,7 @@ class Dashboard extends React.Component {
           </Drawer>
           <main className={classes.content}>
             <div className={classes.appBarSpacer} />
-            <div style={{ paddingTop: 4, paddingBottom: 4, marginTop: 2, marginBottom: 2, fontWeight: 'bolder', fontVariant: 'small-caps', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+            <div style={{ paddingTop: 4, alignItems: 'center', paddingBottom: 4, marginTop: 2, marginBottom: 2, fontWeight: 'bolder', fontVariant: 'small-caps', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
               <div style={{ flex: 1.5 }}>Player</div>
               <div style={{ flex: 1 }}>Position</div>
               <div style={{ flex: 1.5 }}>Team</div>
@@ -198,8 +206,8 @@ class Dashboard extends React.Component {
               <div style={{ flex: 1 }}>Tier</div>
               <div style={{ flex: 1 }}>Nerd Rank</div>
               <div style={{ flex: 1 }}>Bye Week</div>
-              <div style={{ flex: 1.5 }}>
-                Show drafted 
+              <div style={{ flex: 1.2 }}>
+                Show drafted
                 <Checkbox
                   checked={this.state.showDrafted}
                   onChange={this.onFilteringDrafted}
@@ -208,7 +216,7 @@ class Dashboard extends React.Component {
               </div>
             </div>
             <hr />
-            {displayPlayers.map(p => <Player key={p.playerId} player={p} onDraftPlayer={this.onDraftPlayer} onDisablePlayer={this.onDisablePlayer} />)}
+            {displayPlayers.map(p => <Player key={p.playerId} player={p} onDraftPlayer={this.onDraftPlayer} />)}
           </main>
         </div>
       </React.Fragment>
