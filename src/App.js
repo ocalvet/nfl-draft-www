@@ -155,8 +155,7 @@ class Dashboard extends React.Component {
   render() {
     const { classes } = this.props;
     const players = this.state.playerList || [];
-    const displayPlayers = this.state.showDrafted ? players : players.filter(p => !p.drafted);
-    console.log('Listing players', players);
+    const displayPlayers = this.state.showDrafted ? players : players.filter(p => !(p.draftedBy && p.draftedBy.length > 0));
     return (
       <React.Fragment>
         <CssBaseline />

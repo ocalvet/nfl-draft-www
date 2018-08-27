@@ -28,16 +28,16 @@ export default ({ player, onDraftPlayer }) => {
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
-            <MenuItem value={'j'}>John</MenuItem>
+            <MenuItem value={'b'}>Brett</MenuItem>
+            <MenuItem value={'ca'}>Cato</MenuItem>
             <MenuItem value={'c'}>Chris</MenuItem>
             <MenuItem value={'f'}>Faisal</MenuItem>
-            <MenuItem value={'m'}>Mike</MenuItem>
-            <MenuItem value={'w'}>Wendy</MenuItem>
-            <MenuItem value={'o'}>Ovi</MenuItem>
-            <MenuItem value={'ca'}>Cato</MenuItem>
-            <MenuItem value={'b'}>Brett</MenuItem>
+            <MenuItem value={'je'}>Jeff</MenuItem>
+            <MenuItem value={'j'}>John</MenuItem>
             <MenuItem value={'ma'}>Mark</MenuItem>
-            <MenuItem value={'u'}>UNK</MenuItem>
+            <MenuItem value={'m'}>Mike</MenuItem>
+            <MenuItem value={'o'}>Ovi</MenuItem>
+            <MenuItem value={'w'}>Wendy</MenuItem>
           </Select>
       </div>
     </div>
