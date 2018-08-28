@@ -152,6 +152,10 @@ class Dashboard extends React.Component {
     localStorage.setItem(STORAGE_KEY, data);
   }
 
+  showMyPicks = () => {
+    console.log('Showing my picks');
+  }
+
   render() {
     const { classes } = this.props;
     const players = this.state.playerList || [];
@@ -179,6 +183,7 @@ class Dashboard extends React.Component {
               <Typography variant="title" color="inherit" noWrap className={classes.title}>
                 Draft Notes
               </Typography>
+              <Button color="inherit" onClick={this.showMyPicks}>My Picks</Button>
               <Button color="inherit" onClick={this.saveStateData}>Save</Button>
             </Toolbar>
           </AppBar>
