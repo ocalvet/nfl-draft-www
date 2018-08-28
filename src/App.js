@@ -9,10 +9,14 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import Checkbox from '@material-ui/core/Checkbox';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import Player from './Player';
+import {
+  BrowserRouter as Router,
+  Route,
+  Link
+} from 'react-router-dom'
+import Home from './Home';
 import _ from 'lodash';
 import { Button } from '@material-ui/core';
 
@@ -202,25 +206,10 @@ class Dashboard extends React.Component {
           </Drawer>
           <main className={classes.content}>
             <div className={classes.appBarSpacer} />
-            <div style={{ paddingTop: 4, alignItems: 'center', paddingBottom: 4, marginTop: 2, marginBottom: 2, fontWeight: 'bolder', fontVariant: 'small-caps', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-              <div style={{ flex: 1.5 }}>Player</div>
-              <div style={{ flex: 1 }}>Position</div>
-              <div style={{ flex: 1.5 }}>Team</div>
-              <div style={{ flex: 1 }}>Depth</div>
-              <div style={{ flex: 1 }}>Tier</div>
-              <div style={{ flex: 1 }}>Nerd Rank</div>
-              <div style={{ flex: 1 }}>Bye Week</div>
-              <div style={{ flex: 1.2 }}>
-                Show drafted
-                <Checkbox
-                  checked={this.state.showDrafted}
-                  onChange={this.onFilteringDrafted}
-                  value="drafted"
-                />
-              </div>
-            </div>
-            <hr />
-            {displayPlayers.map(p => <Player key={p.playerId} player={p} onDraftPlayer={this.onDraftPlayer} />)}
+            <Router>
+                <Route exact path="/" component={Home} players={displayPlayers} />
+                {/* <Route path="/my-picks" component={MyPicks}/> */}
+            </Router>
           </main>
         </div>
       </React.Fragment>
