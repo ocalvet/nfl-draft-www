@@ -15,12 +15,14 @@ app.get('/', (req, res) => {
 app.get('/:url', async (req, res) => {
   try {
     const url = `https://www.fantasyfootballnerd.com/service/${req.params.url}/json/${process.env.TOKEN}`;
+    console.log(`making request to ${url}`)
     const response = await fetch(url);
+    const textData = await response.text();
     const data = await response.json();
     res.json(data);
   } catch (e) {
     res.statusCode = 400;
-    res.json(data);
+    res.json(e);
   }
 });
 

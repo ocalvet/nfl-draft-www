@@ -44,18 +44,19 @@ export default ({ player, onDraftPlayer }) => {
           <MenuItem value="">
             <em>None</em>
           </MenuItem>
-          <MenuItem value={'b'}>Brett</MenuItem>
-          <MenuItem value={'ca'}>Cato</MenuItem>
-          <MenuItem value={'c'}>Chris</MenuItem>
-          <MenuItem value={'f'}>Faisal</MenuItem>
-          <MenuItem value={'je'}>Jeff</MenuItem>
-          <MenuItem value={'j'}>John</MenuItem>
-          <MenuItem value={'ma'}>Mark</MenuItem>
-          <MenuItem value={'m'}>Mike</MenuItem>
-          <MenuItem value={'r'}>Rob</MenuItem>
-          <MenuItem value={'jd'}>John D.</MenuItem>
-          <MenuItem value={'o'}>Ovi</MenuItem>
-          <MenuItem value={'w'}>Wendy</MenuItem>
+            Slobber Knockers
+          <MenuItem value={'b'}>Playmakers</MenuItem>
+          <MenuItem value={'ca'}>Five Star Generals</MenuItem>
+          <MenuItem value={'c'}>Slobber Knockers</MenuItem>
+          <MenuItem value={'f'}>Yo Belichick Yo Self</MenuItem>
+          <MenuItem value={'jc'}>Dolphins 'are good'</MenuItem>
+          <MenuItem value={'j'}>Falcons</MenuItem>
+          <MenuItem value={'ma'}>Brawlers Work Shop</MenuItem>
+          <MenuItem value={'m'}>Deflated Futballs</MenuItem>
+          <MenuItem value={'r'}>Flash me your Chubb</MenuItem>
+          <MenuItem value={'jd'}>Mile High</MenuItem>
+          <MenuItem value={'o'}>Mutant Penguinz</MenuItem>
+          <MenuItem value={'w'}>Calvet 3</MenuItem>
         </Select>
       </div>
     </div>
